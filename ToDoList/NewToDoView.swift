@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct NewToDoView: View {
+    @Environment(\.managedObjectContext) var context
+    
     // data we're going to keep track of
     @State var title: String
     @State var isImportant: Bool
     
     // create a two way connection between this file and ContentView
-    @Binding var toDoItems: [ToDoItem]
+    //@Binding var toDoItems: [ToDoItem]
     @Binding var showNewTask : Bool
     
     var body: some View {
@@ -49,15 +51,26 @@ struct NewToDoView: View {
     // function to create to do objects
     private func addTask(title: String, isImportant: Bool = false) {
         // create new ToDoItem object
-        let task = ToDoItem(title: title, isImportant: isImportant) // call initializer
+        //let task = ToDoItem(title: title, isImportant: isImportant) // call initializer
         // add object to array
-        toDoItems.append(task)
+        //toDoItems.append(task)
+        
+        let task = ToDo(context: context)
+        task.id = UUID()
+        task.title = title
+        task.isImportant = isImportant
+                
+        do {
+                    try context.save()
+        } catch {
+                    print(error)
+        }
     }
 }
 
 struct NewToDoView_Previews: PreviewProvider {
     static var previews: some View {
         // if no values are specified for both properties, provide default values
-        NewToDoView(title: "", isImportant: false, toDoItems: .constant([]), showNewTask: .constant(true))
+        NewToDoView(title: "", isImportant: false, showNewTask: .constant(true))
     }
 }
