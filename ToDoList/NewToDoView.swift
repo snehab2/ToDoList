@@ -12,6 +12,10 @@ struct NewToDoView: View {
     @State var title: String
     @State var isImportant: Bool
     
+    // create a two way connection between this file and ContentView
+    @Binding var toDoItems: [ToDoItem]
+    @Binding var showNewTask : Bool
+    
     var body: some View {
         VStack {
             Text("Add a new task")
@@ -29,7 +33,9 @@ struct NewToDoView: View {
             .padding()
             // button
             Button(action: {
-              
+                // function call
+                self.addTask(title: self.title, isImportant: self.isImportant)
+                self.showNewTask = false
             }) {
                 Text("Add")
             }
@@ -37,15 +43,21 @@ struct NewToDoView: View {
             .background(Color(.systemGroupedBackground))
             .cornerRadius(15)
             .padding()
-            
-            
         }
+    }
+    
+    // function to create to do objects
+    private func addTask(title: String, isImportant: Bool = false) {
+        // create new ToDoItem object
+        let task = ToDoItem(title: title, isImportant: isImportant) // call initializer
+        // add object to array
+        toDoItems.append(task)
     }
 }
 
 struct NewToDoView_Previews: PreviewProvider {
     static var previews: some View {
         // if no values are specified for both properties, provide default values
-        NewToDoView(title: "", isImportant: false)
+        NewToDoView(title: "", isImportant: false, toDoItems: .constant([]), showNewTask: .constant(true))
     }
 }
